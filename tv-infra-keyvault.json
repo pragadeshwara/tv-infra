@@ -34,7 +34,7 @@
       }
     }
   },
-  "variables": {"name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-', 'keyvault')]"},
+  "variables": {"name": "[concat('tv', parameters('environment'), parameters('resourceGroupName'), 'keyvault')]"},
   "resources": [
     {
         "name": "[variables('name')]",
@@ -70,10 +70,10 @@
         "resources": [
             {
                 "type": "secrets",
-                "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-', 'keyvault-secrets')]",
+                "name": "[concat('tv', parameters('environment'), parameters('resourceGroupName'), 'keyvault-secrets')]",
                 "apiVersion": "2016-10-01",
                 "dependsOn": [
-                    "[resourceId('Microsoft.KeyVault/vaults', 'tv-staging-ADinfrastructure-keyvault')]"
+                    "[resourceId('Microsoft.KeyVault/vaults', 'tvstagingADinfrastructurekeyvault')]"
                 ],
                 "properties": {
                     "value": "secretValue"

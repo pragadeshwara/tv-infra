@@ -67,7 +67,8 @@
           "allowPermanentDelete": true,
           "days": 365,
           "enabled": true
-        }
+        },
+        "isVersioningEnabled": true
       }
     }
   ]

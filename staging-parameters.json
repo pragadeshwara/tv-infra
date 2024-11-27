@@ -30,7 +30,7 @@
           "access": "Allow",
           "direction": "Inbound",
           "priority": 100,
-          "RuleName": "Allow SSH"
+          "RuleName": "Allow_SSH"
         }
       },
       "storage-kind":{
