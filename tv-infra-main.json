@@ -137,7 +137,6 @@
           "environment": { "value": "[parameters('environment')]" },
           "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
           "location": { "value": "[parameters('location')]" },
-          "networkSecurityGroupName": { "value": "[parameters('nsg-name')]" },
           "address-prefix": { "value": "[parameters('address-prefix')]" },
           "subnet1-address-prefix": { "value": "[parameters('subnet1-address-prefix')]" },
           "Nsg-rules": { "value": "[parameters('Nsg-rule')]" }
