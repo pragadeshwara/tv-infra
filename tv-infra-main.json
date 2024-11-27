@@ -146,20 +146,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "tv-infra-communicationService",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('uri'),'tv-infra-communicationservice.json')]"        },
-        "parameters": {
-          "environment": {"value": "[parameters('environment')]" },
-          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
       "name": "tv-infra-APIManagement",
       "properties": {
         "mode": "Incremental",
