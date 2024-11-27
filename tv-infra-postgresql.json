@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "The environment (e.g., dev, test, prod)."
+      }
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "TV-infrastructure",
+      "metadata": {
+        "description": "The name of the resource group."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for all resources."
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Key Vault."
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "The admin username for PostgreSQL."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The admin password for PostgreSQL."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2017-12-01",
+      "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-PSQL-SERVER')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "location": "[parameters('location')]",
+      "properties": {
+        "infrastructureEncryption": "Enabled",
+        "minimalTlsVersion": "TLSEnforcementDisabled",
+        "publicNetworkAccess": "Disabled",
+        "sslEnforcement": "Disabled",
+        "storageProfile": {
+          "backupRetentionDays": 365,
+          "geoRedundantBackup": "Enabled",
+          "storageAutogrow": "Enabled",
+          "storageMB": 512
+        },
+        "administratorLogin": "[parameters('adminUserName')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "createMode": "Default"
+      },
+      "sku": {
+        "capacity": 0,
+        "family": "",
+        "name": "",
+        "size": "",
+        "tier": "Basic"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('keyVaultName'), '/PostgresAdminPassword')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "value": "[parameters('adminPassword')]",
+        "contentType": "PostgreSQL Admin Password"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.DBforPostgreSQL/servers', concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-PSQL-SERVER'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers/databases",
+      "apiVersion": "2017-12-01",
+      "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-PSQL-DB')]",
+      "properties": {
+        "charset": "UTF8",
+        "collation": "C.UTF-8"
+      }
+    }
+  ]
+}

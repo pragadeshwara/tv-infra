@@ -1,0 +1,181 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+    "parameters": {
+      "uri": {
+        "type": "string"
+      },
+      "environment": {
+        "type": "string"
+      },
+      "resourceGroupName": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string"
+      }, 
+      "tenantId": {
+        "type": "string"
+      },
+      "ObjectId": {
+        "type": "string"
+      },
+      "Nsg-rule": {
+        "type": "object"
+      },
+      "storage-kind":{
+        "type": "string"
+      },
+      "storage-sku-name":{
+        "type": "string"
+      },
+      "nsg-name": {
+        "type": "string"
+      },
+      "address-prefix": {
+        "type": "string"
+      },
+      "subnet1-address-prefix": {
+        "type": "string"
+      },
+      "apim-sku-name": {
+        "type": "string"
+      },
+      "apim-sku-capacity": {
+        "type": "int"
+      },
+      "publisherEmail": {
+        "type": "string"
+      },
+      "publisherName":{
+        "type": "string"
+      },
+      "adminUserName": {
+        "type": "string"
+      },
+      "adminPassword": {
+        "type": "securestring"
+      },
+      "keyVautName": {
+        "type": "string"
+      }
+    },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-entra",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-entra.json')]"
+        },
+        "parameters": {
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
+          "location": { "value": "[parameters('location')]" }
+        }
+      }
+    },
+        {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-keyvault",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-keyvault.json')]"        },
+        "parameters": {
+          "environment": {"value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
+          "location": { "value": "[parameters('location')]" },         
+          "tenantId": { "value": "[parameters('tenantId')]" },
+          "ObjectId": { "value": "[parameters('ObjectId')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-mapsAccount",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-mapsAccount.json')]"        },
+        "parameters": {
+          "environment": {"value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" }
+        }
+      }
+    },    
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-storageAccount",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-storageAccount.json')]"        },
+        "parameters": {
+          "environment": {"value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "storage-kind": {"value": "[parameters('storage-kind')]"},
+          "storage-sku-name": {"value": "[parameters('storage-sku-name')]"}
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-Vnet",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'), 'tv-infra-VirtualNetwork.json')]"
+        },
+        "parameters": {
+          "environment": { "value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "networkSecurityGroupName": { "value": "[parameters('nsg-name')]" },
+          "address-prefix": { "value": "[parameters('address-prefix')]" },
+          "subnet1-address-prefix": { "value": "[parameters('subnet1-address-prefix')]" },
+          "Nsg-rules": { "value": "[parameters('Nsg-rule')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-communicationService",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-communicationservice.json')]"        },
+        "parameters": {
+          "environment": {"value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "tv-infra-APIManagement",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('uri'),'tv-infra-APIManagement.json')]"        },
+        "parameters": {
+          "environment": {"value": "[parameters('environment')]" },
+          "resourceGroupName": { "value": "[parameters('resourceGroupName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "apim-sku-name" : { "value": "[parameters('apim-sku-name')]"},
+          "apim-sku-capacity": { "value": "[parameters('apim-sku-capacity')]"},
+          "publisherEmail": {"value": "[parameters('publisherEmail')]"},
+          "publisherName": {"value": "[parameters('publisherName')]"}
+        }
+      }
+    }
+  ]
+}

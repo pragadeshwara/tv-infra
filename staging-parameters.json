@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "uri": {
+        "value": "https://raw.githubusercontent.com/pragadeshwara/tv-infra/main/"
+      },
+      "environment": {
+        "value": "staging"
+      },
+      "resourceGroupName": {
+        "value": "ADinfrastructure"
+      },
+      "location": {
+        "value": "UKsouth"
+      }, 
+      "tenantId": {
+        "value": "tenantId"
+      },
+      "ObjectId": {
+        "value": "ObjectId"
+      },
+      "Nsg-rule": {
+        "value": {
+          "protocol": "Tcp",
+          "sourcePortRange": "*",
+          "destinationPortRange": "22",
+          "sourceAddressPrefix": "*",
+          "destinationAddressPrefix": "*",
+          "access": "Allow",
+          "direction": "Inbound",
+          "priority": 100,
+          "RuleName": "Allow SSH"
+        }
+      },
+      "storage-kind":{
+        "value": "StorageV2"
+      },
+      "storage-sku-name":{
+        "value": "Standard_LRS"
+      },
+      "nsg-name": {
+          "value": "nsg-name"
+      },
+      "address-prefix": {
+        "value": "10.0.0.0/16"
+      },
+      "subnet1-address-prefix": {
+        "value": "10.0.1.0/24"
+      },
+      "apim-sku-name": {
+        "value": "Developer"
+      },
+      "apim-sku-capacity": {
+        "value": 1
+      },
+      "publisherEmail": {
+        "value": "publisherEmail"
+      },
+      "publisherName":{
+        "value": "publisherName"
+      },
+      "adminUserName": {
+        "value": "adminUser"
+      },
+      "adminPassword": {
+        "value": "adminpassword"
+      },
+      "keyVautName": {
+          "value": "keyvaultname"
+      }
+    }
+}
+  

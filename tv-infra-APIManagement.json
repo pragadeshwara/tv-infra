@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "The environment (e.g., dev, test, prod)."
+      }
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "TV-infrastructure",
+      "metadata": {
+        "description": "The name of the resource group."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for all resources."
+      }
+    },
+    "apim-sku-name": {
+      "type": "string",
+      "metadata": {
+        "description": "type of apim service "
+      }
+    },
+    "apim-sku-capacity": {
+      "type": "int",
+      "metadata": {
+        "description": " number of api management "
+      }
+    },
+    "publisherEmail": {
+      "type": "string",
+      "metadata": {
+        "description": "email for notifications"
+      }
+    },
+    "publisherName": {
+      "type": "string",
+      "metadata": {
+        "description": "name of organization"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2021-08-01",
+      "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'),'-APIManageent')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('apim-sku-name')]",
+        "capacity": "[parameters('apim-sku-capacity')]"
+      },
+      "properties": {
+        "publisherEmail": "[parameters('publisherEmail')]",
+        "publisherName": "[parameters('publisherName')]"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      }
+    }
+  ]
+}

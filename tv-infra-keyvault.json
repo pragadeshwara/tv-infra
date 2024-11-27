@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters":{
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "The environment (e.g., dev, test, prod)."
+      }
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "TV-infrastructure",
+      "metadata": {
+        "description": "The name of the resource group."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for all resources."
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "The tenant ID for the SaaS template."
+      }
+    },
+    "objectId": {
+      "type": "string",
+      "metadata": {
+        "desciption": "the Object ID "
+      }
+    }
+  },
+  "variables": {"name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-', 'keyvault')]"},
+  "resources": [
+    {
+        "name": "[variables('name')]",
+        "type": "Microsoft.KeyVault/vaults",
+        "apiVersion": "2023-07-01",
+        "location": "[parameters('location')]",
+        "properties": {
+            "enabledForDeployment": true,
+            "enabledForTemplateDeployment": true,
+            "enabledForDiskEncryption": true,
+            "tenantId": "[parameters('tenantId')]",
+            "accessPolicies": [
+                {
+                    "tenantId": "[parameters('tenantId')]",
+                    "objectId": "[parameters('objectId')]",
+                    "permissions": {
+                        "keys": [
+                            "Get"
+                        ],
+                        "secrets": [
+                            "List",
+                            "Get",
+                            "Set"
+                        ]
+                    }
+                }
+            ],
+            "sku": {
+                "name": "standard",
+                "family": "A"
+            }
+        },
+        "resources": [
+            {
+                "type": "secrets",
+                "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-', 'keyvault-secrets')]",
+                "apiVersion": "2016-10-01",
+                "dependsOn": [
+                    "[resourceId('Microsoft.KeyVault/vaults', 'tv-staging-ADinfrastructure-keyvault')]"
+                ],
+                "properties": {
+                    "value": "secretValue"
+                }
+            }
+        ]
+    }
+  ],
+  "outputs": {
+    "keyVultName": {
+      "type": "string",
+      "value": "[variables('name')]"
+    }
+  }
+}

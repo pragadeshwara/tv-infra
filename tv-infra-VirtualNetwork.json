@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string"
+    },
+    "resourceGroupName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "address-prefix": {
+      "type": "string"
+    },
+    "subnet1-address-prefix": {
+      "type": "string"
+    },
+    "Nsg-rules": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "nsgName": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-NSG')]",
+    "vnetName": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-virtualNetwork')]",
+    "subnetName": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-virtualNetwork-subnet1')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('nsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "[parameters('Nsg-rules').ruleName]",
+            "properties": {
+              "protocol": "[parameters('Nsg-rules').protocol]",
+              "sourcePortRange": "[parameters('Nsg-rules').sourcePortRange]",
+              "destinationPortRange": "[parameters('Nsg-rules').destinationPortRange]",
+              "sourceAddressPrefix": "[parameters('Nsg-rules').sourceAddressPrefix]",
+              "destinationAddressPrefix": "[parameters('Nsg-rules').destinationAddressPrefix]",
+              "access": "[parameters('Nsg-rules').access]",
+              "direction": "[parameters('Nsg-rules').direction]",
+              "priority": "[parameters('Nsg-rules').priority]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-11-01",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "[variables('vnetName')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('address-prefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnet1-address-prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "The environment (e.g., dev, test, prod)."
+      }
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "TV-infrastructure",
+      "metadata": {
+        "description": "The name of the resource group."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for all resources."
+      }
+    },
+    "storage-kind": {
+      "type": "string",
+      "metadata": {
+        "description": "Kind value of the storage account."
+      }
+    },
+    "storage-sku-name": {
+      "type": "string",
+      "metadata": {
+        "description": "SKU of the storage account."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-04-01",
+      "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'),'-storageAccount')]",
+      "tags": {
+        "displayName": "[concat('tv-', parameters('environment'),'-', parameters('resourceGroupName'),'-storageAccount')]"
+      },
+      "location": "[parameters('location')]",
+      "kind": "[parameters('storage-kind')]",
+      "sku": {
+        "name": "[parameters('storage-sku-name')]"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2021-09-01",
+      "name": "[concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-storageAccount', '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', concat('tv-', parameters('environment'), '-', parameters('resourceGroupName'), '-storageAccount'))]"
+      ],
+      "properties": {
+        "restorePolicy": {
+          "days": 365,
+          "enabled": true
+        },
+        "containerDeleteRetentionPolicy": {
+          "allowPermanentDelete": true,
+          "days": 365,
+          "enabled": true
+        }
+      }
+    }
+  ]
+}
