@@ -38,9 +38,9 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2023-04-01",
-      "name": "[concat('trustvault', parameters('environment'),'storageaccount')]",
+      "name": "[concat('trustvault', parameters('environment'))]",
       "tags": {
-        "displayName": "[concat('trustvault', parameters('environment'),'storageaccount')]"
+        "displayName": "[concat('trustvault', parameters('environment'))]"
       },
       "location": "[parameters('location')]",
       "kind": "[parameters('storage-kind')]",
@@ -54,9 +54,9 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices",
       "apiVersion": "2021-09-01",
-      "name": "[concat('trustvault', parameters('environment'), 'storageaccount', '/default')]",
+      "name": "[concat('trustvault', parameters('environment'), '/default')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', concat('trustvault', parameters('environment'),'storageaccount'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', concat('trustvault', parameters('environment')))]"
       ],
       "properties": {
         "restorePolicy": {
